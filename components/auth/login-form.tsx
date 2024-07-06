@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthCard } from "./auth-form";
+import { AuthCard } from "./auth-card";
 
 export const LoginForm = () => {
   return (
@@ -10,9 +10,7 @@ export const LoginForm = () => {
       backButtonLabel="Create a new account"
       showSocials
     >
-      <div>
-        <h1>Hey</h1>
-      </div>
+      <div></div>
     </AuthCard>
   );
 };
