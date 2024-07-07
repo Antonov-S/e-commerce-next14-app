@@ -15,6 +15,13 @@
       "when": 1720214795989,
       "tag": "0001_common_mojo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1720393430111,
+      "tag": "0002_cloudy_starjammers",
+      "breakpoints": true
     }
   ]
 }

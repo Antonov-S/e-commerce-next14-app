@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import {
@@ -18,6 +19,8 @@ import {
 import { LoginSchema } from "@/types/login-schema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { emailSignIn } from "@/server/actions/email-signin";
+import { cn } from "@/lib/utils";
 
 export const LoginForm = () => {
   const form = useForm({
@@ -28,8 +31,10 @@ export const LoginForm = () => {
     }
   });
 
+  const { execute, status, result } = useAction(emailSignIn);
+
   const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    console.log(values);
+    execute(values);
   };
 
   return (
@@ -85,7 +90,13 @@ export const LoginForm = () => {
                 <Link href="/auth/reset">Forgot your password</Link>
               </Button>
             </div>
-            <Button type="submit" className="w-full my-2">
+            <Button
+              type="submit"
+              className={cn(
+                "w-full my-4",
+                status === "executing" ? "animate-pulse" : ""
+              )}
+            >
               {"Login"}
             </Button>
           </form>
