@@ -22,6 +22,20 @@
       "when": 1720393430111,
       "tag": "0002_cloudy_starjammers",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1720478482163,
+      "tag": "0003_tranquil_cyclops",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1720478861658,
+      "tag": "0004_foamy_eternity",
+      "breakpoints": true
     }
   ]
 }
