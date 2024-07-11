@@ -27,7 +27,11 @@ export const emailSignIn = action(
       }
 
       //If the user is not verified
-      if (!existingUser.emailVerified) {
+      if (!existingUser?.emailVerified) {
+        // TODO: Typescript error!!!
+        if (!existingUser?.email) {
+          return { error: "User not found" };
+        }
         const verificationToken = await generateEmailVerificationToken(
           existingUser.email
         );
