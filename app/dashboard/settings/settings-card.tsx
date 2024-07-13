@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
 import { z } from "zod";
+import { useAction } from "next-safe-action/hooks";
 
 import {
   Card,
@@ -29,12 +30,15 @@ import { SettingsSchema } from "@/types/settings-schema";
 import { Switch } from "@/components/ui/switch";
 import { FormError } from "@/components/auth/form-error";
 import { FormSuccess } from "@/components/auth/form-success";
+import { settings } from "@/server/actions/settings";
 
 type SettingsCardProps = {
   session: Session;
 };
 
 export default function SettingsCard(session: SettingsCardProps) {
+  console.log(session);
+
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
     defaultValues: {
@@ -42,16 +46,26 @@ export default function SettingsCard(session: SettingsCardProps) {
       newPassword: undefined,
       name: session.session.user?.name || undefined,
       email: session.session.user?.email || undefined,
-      image: session.session.user?.image || undefined
-      //   isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined,
+      image: session.session.user?.image || undefined,
+      isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined
     }
   });
   const [error, setError] = useState<string | undefined>(undefined);
   const [success, setSuccess] = useState<string | undefined>(undefined);
   const [avatarUploading, setAvatarUploading] = useState(false);
 
+  const { execute, status } = useAction(settings, {
+    onSuccess: data => {
+      if (data?.success) setSuccess(data.success);
+      if (data?.error) setError(data.error);
+    },
+    onError: error => {
+      setError("Something went wrong");
+    }
+  });
+
   const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-    // execute(values);
+    execute(values);
   };
 
   return (
@@ -128,7 +142,10 @@ export default function SettingsCard(session: SettingsCardProps) {
                   <FormControl>
                     <Input
                       placeholder="*****"
-                      disabled={status === "executing"}
+                      disabled={
+                        status === "executing" ||
+                        session?.session.user.isOAuth === true
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -146,7 +163,10 @@ export default function SettingsCard(session: SettingsCardProps) {
                   <FormControl>
                     <Input
                       placeholder="*****"
-                      disabled={status === "executing"}
+                      disabled={
+                        status === "executing" ||
+                        session?.session.user.isOAuth === true
+                      }
                       {...field}
                     />
                   </FormControl>
@@ -166,7 +186,10 @@ export default function SettingsCard(session: SettingsCardProps) {
                   </FormDescription>
                   <FormControl>
                     <Switch
-                      disabled={status === "executing"}
+                      disabled={
+                        status === "executing" ||
+                        session?.session.user.isOAuth === true
+                      }
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
