@@ -4,10 +4,10 @@ import { createSafeActionClient } from "next-safe-action";
 import bcrpyt from "bcrypt";
 import { eq } from "drizzle-orm";
 
-import { RegisterSchema } from "@/types/register-schema";
 import { db } from "..";
 import { users } from "../schema";
 import { generateEmailVerificationToken } from "./tokens";
+import { RegisterSchema } from "@/types/register-schema";
 import { sendVerificationEmail } from "./email";
 
 const action = createSafeActionClient();
@@ -15,8 +15,8 @@ const action = createSafeActionClient();
 export const emailRegister = action(
   RegisterSchema,
   async ({ email, name, password }) => {
+    //We are hasing our password
     const hashedPassword = await bcrpyt.hash(password, 10);
-    console.log(hashedPassword);
 
     //Check existing user
     const existingUser = await db.query.users.findFirst({
@@ -44,11 +44,12 @@ export const emailRegister = action(
     });
 
     const verificationToken = await generateEmailVerificationToken(email);
+
     await sendVerificationEmail(
       verificationToken[0].email,
       verificationToken[0].token
     );
 
-    return { success: "Succesfull registration" };
+    return { success: "Confirmation Email Sent!" };
   }
 );

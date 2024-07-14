@@ -7,6 +7,20 @@ import getBaseURL from "@/lib/base-url";
 const resend = new Resend(process.env.RESEND_APY_KEY);
 const domain = getBaseURL();
 
+export const sendTwoFactorTokenByEmail = async (
+  email: string,
+  token: string
+) => {
+  const { data, error } = await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: email,
+    subject: "Sproud and Scribble - Your 2 Factor Token",
+    html: `<p>Your Confirmation Code: ${token}</p>`
+  });
+  if (error) return console.log(error);
+  if (data) return data;
+};
+
 export const sendVerificationEmail = async (email: string, token: string) => {
   const confirmLink = `${domain}/auth/new-verification?token=${token}`;
   const { data, error } = await resend.emails.send({
