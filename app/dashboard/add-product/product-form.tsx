@@ -37,8 +37,8 @@ export default function ProductForm() {
       title: "",
       description: "",
       price: 0
-    },
-    mode: "onChange"
+    }
+    // mode: "onChange"
   });
 
   const router = useRouter();
