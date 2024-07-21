@@ -1,5 +1,9 @@
 "use client";
 
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { VariantsWithImagesTags } from "@/lib/infer-type";
 import {
   Dialog,
@@ -9,6 +13,18 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { VariantSchema } from "@/types/variant-schema";
 
 type ProductVariantProps = {
   children: React.ReactNode;
@@ -23,17 +39,94 @@ export default function ProductVariant({
   productID,
   variant
 }: ProductVariantProps) {
+  const form = useForm<z.infer<typeof VariantSchema>>({
+    resolver: zodResolver(VariantSchema),
+    defaultValues: {
+      tags: [],
+      variantImages: [],
+      color: "#000000",
+      editMode,
+      id: undefined,
+      productID,
+      productType: "Black Notebook"
+    }
+  });
+
+  function onSubmit(values: z.infer<typeof VariantSchema>) {
+    console.log(values);
+  }
+
   return (
     <Dialog>
       <DialogTrigger>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogTitle>{editMode ? "Edit" : "Create"} your variant</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            Manage your product variants here. You can add tags, images, and
+            more.
           </DialogDescription>
         </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="productType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Pick a title for your variant"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="color"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Color</FormLabel>
+                  <FormControl>
+                    <Input type="color" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variant Tags</FormLabel>
+                  <FormControl>{/* <InputTags /> */}</FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {editMode && variant && (
+              <Button
+                variant={"destructive"}
+                type="button"
+                onClick={e => e.preventDefault()}
+              >
+                Delete Variant
+              </Button>
+            )}
+            {/* <VariantImages /> */}
+            <Button type="submit">
+              {editMode ? "Update Variant" : "Create Variant"}
+            </Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
