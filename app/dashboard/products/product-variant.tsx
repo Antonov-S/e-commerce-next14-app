@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { VariantSchema } from "@/types/variant-schema";
+import { InputTags } from "./input-tags";
 
 type ProductVariantProps = {
   children: React.ReactNode;
@@ -107,11 +108,14 @@ export default function ProductVariant({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Variant Tags</FormLabel>
-                  <FormControl>{/* <InputTags /> */}</FormControl>
+                  <FormControl>
+                    <InputTags {...field} onChange={e => field.onChange(e)} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             {editMode && variant && (
               <Button
                 variant={"destructive"}
