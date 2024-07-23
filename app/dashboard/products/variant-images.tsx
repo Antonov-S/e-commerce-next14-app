@@ -15,15 +15,14 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
+import { UploadDropzone } from "@/app/api/uploadthing/upload";
 import {
   Table,
-  TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { UploadDropzone } from "@/app/api/uploadthing/upload";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -37,18 +36,19 @@ export default function VariantImages() {
   });
 
   const [active, setActive] = useState(0);
+  console.log(getValues());
 
   return (
     <div>
       <FormField
         control={control}
-        name="tags"
+        name={"variantImages"}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Variant Tags</FormLabel>
+            <FormLabel>Tags</FormLabel>
             <FormControl>
               <UploadDropzone
-                className=" ut-allowed-content:text-secondary-foreground ut-label:text-primary ut-upload-icon:text-primary/50 hover:bg-primary/10 transition-all duration-500 ease-in-out border-secondary ut-button:bg-primary/75 ut-button:ut-readying:bg-secondary "
+                className=" ut-allowed-content:text-secondary-foreground ut-label:text-primary ut-upload-icon:text-primary/50 hover:bg-primary/10 transition-all duration-500 ease-in-out border-secondary ut-button:bg-primary/75 ut-button:ut-readying:bg-secondary"
                 onUploadError={error => {
                   console.log(error);
                   setError("variantImages", {

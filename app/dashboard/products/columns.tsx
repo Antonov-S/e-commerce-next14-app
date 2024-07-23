@@ -1,9 +1,8 @@
 "use client";
 
-import { ColumnDef, Row } from "@tanstack/react-table";
 import Link from "next/link";
 import Image from "next/image";
-import { useAction } from "next-safe-action/hooks";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -12,18 +11,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { useAction } from "next-safe-action/hooks";
+import { deleteProduct } from "@/server/actions/delete-product";
+import { VariantsWithImagesTags } from "@/lib/infer-type";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip";
-import { deleteProduct } from "@/server/actions/delete-product";
-import { VariantsWithImagesTags } from "@/lib/infer-type";
 import { ProductVariant } from "./product-variant";
 
 type ProductColumn = {
@@ -89,7 +87,7 @@ export const columns: ColumnDef<ProductColumn>[] = [
     cell: ({ row }) => {
       const variants = row.getValue("variants") as VariantsWithImagesTags[];
       return (
-        <div>
+        <div className="flex gap-2">
           {variants.map(variant => (
             <div key={variant.id}>
               <TooltipProvider>
@@ -100,7 +98,11 @@ export const columns: ColumnDef<ProductColumn>[] = [
                       variant={variant}
                       editMode={true}
                     >
-                      <div className="w-5 h-5 rounded-full" />
+                      <div
+                        className="w-5 h-5 rounded-full"
+                        key={variant.id}
+                        style={{ background: variant.color }}
+                      />
                     </ProductVariant>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -114,13 +116,13 @@ export const columns: ColumnDef<ProductColumn>[] = [
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>
-                  <ProductVariant editMode={false}>
+                  <ProductVariant productID={row.original.id} editMode={false}>
                     <PlusCircle className="h-5 w-5" />
                   </ProductVariant>
                 </span>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Create a new variant</p>
+                <p>Create a new product variant</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
