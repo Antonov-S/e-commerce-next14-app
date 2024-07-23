@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { deleteProduct } from "@/server/actions/delete-product";
 import { VariantsWithImagesTags } from "@/lib/infer-type";
-import ProductVariant from "./product-variant";
+import { ProductVariant } from "./product-variant";
 
 type ProductColumn = {
   title: string;
