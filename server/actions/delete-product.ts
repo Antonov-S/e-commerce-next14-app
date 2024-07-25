@@ -1,36 +1,26 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createSafeActionClient } from "next-safe-action";
 import * as z from "zod";
-import { eq } from "drizzle-orm";
-import algoliasearch from "algoliasearch";
-
 import { db } from "..";
-import { productVariants } from "../schema";
+import { products } from "../schema";
+import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 const action = createSafeActionClient();
 
-const client = algoliasearch(
-  process.env.NEXT_PUBLIC_ALGOLIA_ID!,
-  process.env.ALGOLIA_ADMIN!
-);
-
-const algoliaIndex = client.initIndex("products");
-
-export const deleteVariant = action(
+export const deleteProduct = action(
   z.object({ id: z.number() }),
   async ({ id }) => {
     try {
-      const deletedVariant = await db
-        .delete(productVariants)
-        .where(eq(productVariants.id, id))
+      const data = await db
+        .delete(products)
+        .where(eq(products.id, id))
         .returning();
-      revalidatePath("dashboard/products");
-      algoliaIndex.deleteObject(deletedVariant[0].id.toString());
-      return { success: `Deleted ${deletedVariant[0].productType}` };
+      revalidatePath("/dashboard/products");
+      return { success: `Product ${data[0].title} has been deleted` };
     } catch (error) {
-      return { error: "Failed to delete variant" };
+      return { error: "Failed to delete product" };
     }
   }
 );
