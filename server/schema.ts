@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
+import { InferSelectModel, relations } from "drizzle-orm";
 
 export const RoleEnum = pgEnum("roles", ["user", "admin"]);
 
@@ -29,7 +29,8 @@ export const users = pgTable("user", {
   image: text("image"),
   password: text("password"),
   twoFactorEnabled: boolean("twoFactorEnabled").default(false),
-  role: RoleEnum("roles").default("user")
+  role: RoleEnum("roles").default("user"),
+  customerID: text("customerID")
 });
 
 export const accounts = pgTable(
@@ -55,7 +56,6 @@ export const accounts = pgTable(
     })
   })
 );
-
 export const emailTokens = pgTable(
   "email_tokens",
   {
@@ -209,5 +209,59 @@ export const reviewRelations = relations(reviews, ({ one }) => ({
 }));
 
 export const userRelations = relations(users, ({ many }) => ({
-  reviews: many(reviews, { relationName: "user_reviews" })
+  reviews: many(reviews, { relationName: "user_reviews" }),
+  orders: many(orders, { relationName: "user_orders" })
+}));
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  userID: text("userID")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  total: real("total").notNull(),
+  status: text("status").notNull(),
+  created: timestamp("created").defaultNow(),
+  receiptURL: text("receiptURL"),
+  paymentIntentID: text("paymentIntentID")
+});
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userID],
+    references: [users.id],
+    relationName: "user_orders"
+  }),
+  orderProduct: many(orderProduct, { relationName: "orderProduct" })
+}));
+
+export const orderProduct = pgTable("orderProduct", {
+  id: serial("id").primaryKey(),
+  quantity: integer("quantity").notNull(),
+  productVariantID: serial("productVariantID")
+    .notNull()
+    .references(() => productVariants.id, { onDelete: "cascade" }),
+  productID: serial("productID")
+    .notNull()
+    .references(() => products.id, { onDelete: "cascade" }),
+  orderID: serial("orderID")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" })
+});
+
+export const orderProductRelations = relations(orderProduct, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderProduct.orderID],
+    references: [orders.id],
+    relationName: "orderProduct"
+  }),
+  product: one(products, {
+    fields: [orderProduct.productID],
+    references: [products.id],
+    relationName: "products"
+  }),
+  productVariants: one(productVariants, {
+    fields: [orderProduct.productVariantID],
+    references: [productVariants.id],
+    relationName: "productVariants"
+  })
 }));

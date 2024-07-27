@@ -1,11 +1,11 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -13,13 +13,11 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
-import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,23 +25,42 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { reviewSchema } from "@/types/reviews-schema";
+import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
-//   import { addReview } from "@/server/actions/add-review"
+import { addReview } from "@/server/actions/add-review";
 
-export default function ReviewsForms() {
+export default function ReviewsForm() {
   const params = useSearchParams();
-  const productID = Number(params.get("productID"));
+  const productID = Number(params.get("productId"));
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
       rating: 0,
-      comment: ""
+      comment: "",
+      productID
+    }
+  });
+
+  const { execute, status } = useAction(addReview, {
+    onSuccess({ error, success }) {
+      if (error) {
+        console.log(error);
+        toast.error(error);
+      }
+      if (success) {
+        toast.success("Review Added 👌");
+        form.reset();
+      }
     }
   });
 
   function onSubmit(values: z.infer<typeof reviewSchema>) {
-    console.log("adding the review");
+    execute({
+      comment: values.comment,
+      rating: values.rating,
+      productID
+    });
   }
 
   return (
@@ -63,17 +80,17 @@ export default function ReviewsForms() {
               name="comment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Leave your Review</FormLabel>
+                  <FormLabel>Leave your review</FormLabel>
                   <FormControl>
                     <Textarea
+                      placeholder="How would you describe this product?"
                       {...field}
-                      placeholder="How would you descriube this product?"
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="rating"
@@ -81,7 +98,7 @@ export default function ReviewsForms() {
                 <FormItem>
                   <FormLabel>Leave your Rating</FormLabel>
                   <FormControl>
-                    <Input type="hidden" placeholder="Star Rating" />
+                    <Input type="hidden" placeholder="Star Rating" {...field} />
                   </FormControl>
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map(value => {
@@ -95,7 +112,9 @@ export default function ReviewsForms() {
                           <Star
                             key={value}
                             onClick={() => {
-                              form.setValue("rating", value);
+                              form.setValue("rating", value, {
+                                shouldValidate: true
+                              });
                             }}
                             className={cn(
                               "text-primary bg-transparent transition-all duration-300 ease-in-out",
@@ -111,8 +130,12 @@ export default function ReviewsForms() {
                 </FormItem>
               )}
             />
-            <Button className="w-full" type="submit">
-              Add Review
+            <Button
+              disabled={status === "executing"}
+              className="w-full"
+              type="submit"
+            >
+              {status === "executing" ? "Adding Review..." : "Add Review"}
             </Button>
           </form>
         </Form>
