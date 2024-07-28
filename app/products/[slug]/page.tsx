@@ -7,6 +7,8 @@ import formatPrice from "@/lib/format-price";
 import ProductPick from "@/components/products/product-picks";
 import ProductShowcase from "@/components/products/product-showcase";
 import Reviews from "@/components/reviews/reviews";
+import { getReviewAverage } from "@/lib/review-avarage";
+import Stars from "@/components/reviews/stars";
 
 export async function generateStaticParams() {
   const data = await db.query.productVariants.findMany({
@@ -32,6 +34,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     with: {
       product: {
         with: {
+          reviews: true,
           productVariants: {
             with: {
               variantImages: true,
@@ -44,6 +47,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
   });
 
   if (variant) {
+    const reviewAvg = getReviewAverage(
+      variant?.product.reviews.map(r => r.rating)
+    );
     return (
       <main>
         <section className="flex flex-col lg:flex-row gap-4 lg:gap-12">
@@ -54,6 +60,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <h2 className="text-2xl font-bold">{variant?.product.title}</h2>
             <div>
               <ProductType variants={variant.product.productVariants} />
+              <Stars
+                rating={reviewAvg}
+                totalReviews={variant.product.reviews.length}
+              />
             </div>
             <Separator className="my-2" />
             <p className="text-2xl font-medium py-2">
