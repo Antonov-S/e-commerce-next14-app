@@ -10,6 +10,7 @@ import {
   DrawerHeader,
   DrawerTrigger
 } from "../ui/drawer";
+import CartItems from "./cart-items";
 
 export default function CartDrawer() {
   const { cart } = useCartStore();
@@ -38,6 +39,7 @@ export default function CartDrawer() {
         <DrawerHeader>
           <h1>Cart staff</h1>
         </DrawerHeader>
+        <CartItems />
       </DrawerContent>
     </Drawer>
   );
