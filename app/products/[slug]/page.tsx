@@ -9,6 +9,7 @@ import ProductShowcase from "@/components/products/product-showcase";
 import Reviews from "@/components/reviews/reviews";
 import { getReviewAverage } from "@/lib/review-avarage";
 import Stars from "@/components/reviews/stars";
+import AddCard from "@/components/cart/add-card";
 
 export async function generateStaticParams() {
   const data = await db.query.productVariants.findMany({
@@ -89,6 +90,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 />
               ))}
             </div>
+            <AddCard />
           </div>
         </section>
         <Reviews productID={variant.productID} />
