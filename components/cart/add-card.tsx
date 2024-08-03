@@ -55,7 +55,7 @@ export default function AddCard() {
           addToCart({
             id: Number(productId),
             variant: { variantID: id, quantity },
-            name: title + type,
+            name: title + " " + type,
             price,
             image
           });
