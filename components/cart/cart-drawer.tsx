@@ -12,9 +12,11 @@ import {
 } from "../ui/drawer";
 import CartItems from "./cart-items";
 import CartMessage from "./cart-message";
+import Payment from "./payment";
+import OrderConfirmed from "./order-confirmed";
 
 export default function CartDrawer() {
-  const { cart, checkoutProgress } = useCartStore();
+  const { cart, checkoutProgress, setCheckoutProgress } = useCartStore();
 
   return (
     <Drawer>
@@ -42,6 +44,8 @@ export default function CartDrawer() {
         </DrawerHeader>
         <div className="overflow-auto p-4">
           {checkoutProgress === "cart-page" && <CartItems />}
+          {checkoutProgress === "payment-page" && <Payment />}
+          {checkoutProgress === "confirmation-page" && <OrderConfirmed />}
         </div>
       </DrawerContent>
     </Drawer>
