@@ -86,8 +86,8 @@ export default async function Page() {
                   <Badge
                     className={
                       order.status === "succeeded"
-                        ? "bg-green-700"
-                        : "bg-secondary-foreground"
+                        ? "bg-green-700 hover:bg-green-800"
+                        : "bg-yellow-700 hover:bg-yellow-800"
                     }
                   >
                     {order.status}
