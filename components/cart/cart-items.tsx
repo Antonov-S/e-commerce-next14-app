@@ -47,7 +47,11 @@ export default function CartItems() {
             <h2 className="text-2xl text-muted-foreground text-center">
               Your cart is empty
             </h2>
-            <Lottie classID="h-64" animationData={emptyCart} />
+            <Lottie
+              className="h-56 my-4"
+              classID="h-64"
+              animationData={emptyCart}
+            />
           </motion.div>
         </div>
       )}
