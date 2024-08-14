@@ -10,6 +10,9 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import Sales from "./sales";
+import Earnings from "./earnings";
+
+export const revalidate = 0;
 
 export default async function Analytics() {
   const totalOrders = await db.query.orderProduct.findMany({
@@ -41,6 +44,7 @@ export default async function Analytics() {
         </CardHeader>
         <CardContent>
           <Sales totalOrders={totalOrders} />
+          <Earnings totalOrders={totalOrders} />
         </CardContent>
       </Card>
     );
