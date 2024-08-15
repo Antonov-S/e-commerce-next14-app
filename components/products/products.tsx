@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,9 +14,21 @@ type ProductTypes = {
 };
 
 export default function Products({ variants }: ProductTypes) {
+  const params = useSearchParams();
+  const paramTag = params.get("tag");
+
+  const filtered = useMemo(() => {
+    if (paramTag && variants) {
+      return variants.filter(variant =>
+        variant.variantTags.some(tag => tag.tag === paramTag)
+      );
+    }
+    return variants;
+  }, [paramTag]);
+
   return (
     <main className="grid sm:grid-cols-1 md:grid-cols-2 gap-12 ld:grid-cols-3">
-      {variants.map(variant => (
+      {filtered.map(variant => (
         <Link
           className="py-2"
           key={variant.id}
