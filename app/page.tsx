@@ -1,6 +1,6 @@
+import Algolia from "@/components/products/algolia";
 import Products from "@/components/products/products";
 import { db } from "@/server";
-import { productVariants } from "@/server/schema";
 
 export const revalidate = 60 * 60;
 
@@ -16,6 +16,7 @@ export default async function Home() {
 
   return (
     <main>
+      <Algolia />
       <Products variants={data} />
     </main>
   );
