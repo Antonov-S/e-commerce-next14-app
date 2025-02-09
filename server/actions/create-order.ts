@@ -9,6 +9,12 @@ import { createOrderSchema } from "@/types/order-schema";
 
 const action = createSafeActionClient();
 
+type Product = {
+  productID: number;
+  quantity: number;
+  variantID: number;
+};
+
 export const createOrder = action(
   createOrderSchema,
   async ({ products, status, total, paymentIntentID }) => {
@@ -25,7 +31,7 @@ export const createOrder = action(
       })
       .returning();
     const orderProducts = products.map(
-      async ({ productID, quantity, variantID }) => {
+      async ({ productID, quantity, variantID }: Product) => {
         const newOrderProduct = await db.insert(orderProduct).values({
           quantity,
           orderID: order[0].id,

@@ -78,7 +78,7 @@ export default function Algolia() {
         preserveSharedStateOnUnmount: true
       }}
       indexName="products"
-      searchClient={searchClient}
+      searchClient={searchClient as any}
     >
       <div className="relative">
         <SearchBox

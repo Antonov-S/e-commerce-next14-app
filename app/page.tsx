@@ -1,7 +1,12 @@
-import Algolia from "@/components/products/algolia";
+import dynamic from "next/dynamic";
+
 import ProductTags from "@/components/products/product-tags";
 import Products from "@/components/products/products";
 import { db } from "@/server";
+
+const Algolia = dynamic(() => import("@/components/products/algolia"), {
+  ssr: false
+});
 
 export const revalidate = 60 * 60;
 
@@ -17,7 +22,7 @@ export default async function Home() {
 
   return (
     <main>
-      <Algolia />
+      {/* <Algolia /> */}
       <ProductTags />
       <Products variants={data} />
     </main>

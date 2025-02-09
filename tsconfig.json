@@ -21,15 +21,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@auth/core": ["node_modules/@auth/core"],
-      "@auth/drizzle-adapter/node_modules/@auth/core": [
-        "node_modules/@auth/core"
-      ]
+      "@/types/*": ["types/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types", "types/new-types.d.ts"]
   },
   "include": [
-    "new-types.d.ts",
+    "types/next-auth.d.ts",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

@@ -45,7 +45,7 @@ export const createVariant = action(
           .delete(variantTags)
           .where(eq(variantTags.variantID, editVariant[0].id));
         await db.insert(variantTags).values(
-          tags.map(tag => ({
+          tags.map((tag: string) => ({
             tag,
             variantID: editVariant[0].id
           }))
@@ -54,13 +54,18 @@ export const createVariant = action(
           .delete(variantImages)
           .where(eq(variantImages.variantID, editVariant[0].id));
         await db.insert(variantImages).values(
-          newImgs.map((img, idx: number) => ({
-            name: img.name,
-            size: img.size,
-            url: img.url,
-            variantID: editVariant[0].id,
-            order: idx
-          }))
+          newImgs.map(
+            (
+              img: { name: string; size: number; url: string },
+              idx: number
+            ) => ({
+              name: img.name,
+              size: img.size,
+              url: img.url,
+              variantID: editVariant[0].id,
+              order: idx
+            })
+          )
         );
         algoliaIndex.partialUpdateObject({
           objectID: editVariant[0].id.toString(),
@@ -84,19 +89,24 @@ export const createVariant = action(
           where: eq(products.id, productID)
         });
         await db.insert(variantTags).values(
-          tags.map(tag => ({
+          tags.map((tag: string) => ({
             tag,
             variantID: newVariant[0].id
           }))
         );
         await db.insert(variantImages).values(
-          newImgs.map((img, idx: number) => ({
-            name: img.name,
-            size: img.size,
-            url: img.url,
-            variantID: newVariant[0].id,
-            order: idx
-          }))
+          newImgs.map(
+            (
+              img: { name: string; size: number; url: string },
+              idx: number
+            ) => ({
+              name: img.name,
+              size: img.size,
+              url: img.url,
+              variantID: newVariant[0].id,
+              order: idx
+            })
+          )
         );
         if (product) {
           algoliaIndex.saveObject({
